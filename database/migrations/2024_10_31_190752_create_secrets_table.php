@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->dateTime('expires_at');
             $table->integer('views')->default(0);
             $table->integer('max_views')->default(1);
+            $table->string('revoke_token');
             $table->timestamps();
         });
     }

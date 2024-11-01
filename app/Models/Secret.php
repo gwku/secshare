@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Secret extends Model
 {
     use HasFactory;
-    protected $fillable = ['content', 'max_views', 'expires_at', 'token'];
+    protected $fillable = ['content', 'max_views', 'expires_at', 'token', 'revoke_token'];
 
     public function getRouteKeyName(): string
     {

@@ -3,6 +3,14 @@
 @section('content')
     <div class="bg-gradient-to-br from-blue-400 to-teal-400 min-h-screen flex items-center justify-center">
         <div class="bg-white rounded-lg shadow-lg p-8 max-w-lg w-full">
+            <div class="" x-data="{ show: true }" x-transition x-show="show"
+                 x-init="setTimeout(() => show = false, 2000)">
+                @if(session('success'))
+                    <div class="bg-teal-500 text-white font-bold rounded-lg px-4 py-2 mb-4">
+                        {{ session('success') }}
+                    </div>
+                @endif
+            </div>
             <h1 class="text-2xl font-semibold text-gray-800">{{ __('secrets.create.create') }}</h1>
             <p class="text-sm text-gray-600 mb-8">{{ __('hero.encryption.description') }}</p>
 
@@ -18,9 +26,10 @@
                     <div class="relative" x-data="{ show: false }">
                         <input id="content" :type="show ? 'text' : 'password'"
                                name="content"
+                               required
                                class="block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                                placeholder="{{ __('secrets.create.enter_secret_placeholder') }}"
-                               value="{{old('content')}}">
+                               value="">
                         <button type="button" @click="show = !show"
                                 class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 focus:text-teal-500">
                             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -62,7 +71,8 @@
                             {{ __('secrets.create.max_views') }}
                             <x-tooltip>{{ __('secrets.create.max_views_tooltip') }}</x-tooltip>
                         </label>
-                        <input type="number" name="max_views" id="max_views" min="1" max="15" value="{{old('max_views')}}"
+                        <input type="number" name="max_views" id="max_views" min="1" max="15"
+                               value="{{old('max_views')}}"
                                class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                                placeholder="{{ __('secrets.create.enter_max_views_placeholder') }}"/>
                         @error('max_views')
@@ -78,7 +88,8 @@
                 </button>
 
                 <div class="mt-4 text-center">
-                    <a href="{{ route('index') }}" class="text-gray-400 underline text-sm hover:text-teal-500">{{ __('secrets.create.how_does_it_work') }}</a>
+                    <a href="{{ route('index') }}"
+                       class="text-gray-400 underline text-sm hover:text-teal-500">{{ __('secrets.create.how_does_it_work') }}</a>
                 </div>
             </form>
         </div>
@@ -86,14 +97,22 @@
 
     <script defer>
         async function encryptAndSubmit() {
-            // Get the secret content
-            const secretContent = document.getElementById('content');
-            const base64Encrypted = await encrypt(secretContent.value);
-
-            // Submit the form with the encrypted content
             const form = document.getElementById('secretForm');
-            secretContent.value = base64Encrypted;
-            form.submit();
+            const secretContent = document.getElementById('content');
+
+            // Don't encrypt if the secret content is empty
+            if (secretContent.value.length === 0) {
+                form.submit();
+                return;
+            }
+
+            try {
+                secretContent.value = await encrypt(secretContent.value);
+                form.submit();
+            } catch (error) {
+                console.error("Failed to encrypt content:", error);
+            }
         }
     </script>
+
 @endsection

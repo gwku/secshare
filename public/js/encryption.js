@@ -1,108 +1,56 @@
 async function encrypt(input) {
-    console.log('Encrypting:', input);
-    // Generate a random key
     const key = await window.crypto.subtle.generateKey(
-        {
-            name: "AES-GCM",
-            length: 256,
-        },
+        {name: "AES-GCM", length: 128},
         true, // extractable
-        ["encrypt", "decrypt"]
+        ["encrypt", "decrypt"],
     );
 
-    // Generate a random IV (12 bytes for AES-GCM)
-    const iv = window.crypto.getRandomValues(new Uint8Array(12));
-
-    // Convert secretContent to a Uint8Array
-    const encoder = new TextEncoder();
-    const data = encoder.encode(input);
-
-    // Encrypt the data
-    const encryptedContent = await window.crypto.subtle.encrypt(
-        {
-            name: "AES-GCM",
-            iv: iv,
-        },
+    const encrypted = await window.crypto.subtle.encrypt(
+        {name: "AES-GCM", iv: new Uint8Array(12)},
         key,
-        data
+        new TextEncoder().encode(input),
     );
 
-    // Convert the encrypted content to Base64
-    const encryptedArray = new Uint8Array(encryptedContent);
-    const encryptedBase64 = btoa(String.fromCharCode(...encryptedArray));
+    const objectKey = (await window.crypto.subtle.exportKey("jwk", key)).k;
+    window.sessionStorage.setItem('objectKey', objectKey)
 
-    // Store the key and IV in sessionStorage in Base64 format
-    const exportedKey = await window.crypto.subtle.exportKey("raw", key);
-    const key_b64 = btoa(String.fromCharCode(...new Uint8Array(exportedKey)));
-    const iv_b64 = btoa(String.fromCharCode(...iv));
-
-    window.sessionStorage.setItem('key', key_b64);
-    window.sessionStorage.setItem('iv', iv_b64);
-
-    // Return the Base64 encoded encrypted value
-    return encryptedBase64;
+    const encryptedArray = new Uint8Array(encrypted);
+    return btoa(String.fromCharCode(...encryptedArray))
 }
 
 function generateUrl() {
-    const key = window.sessionStorage.getItem('key');
-    const iv = window.sessionStorage.getItem('iv');
+    const key = window.sessionStorage.getItem('objectKey');
 
-    if (!key || !iv) {
-        console.log('No key or iv found. Please create a new secret.');
+    if (!key) {
+        console.log('No objectKey found. Please create a new secret.');
         return;
     }
 
-    return '#' + btoa(`key=${key}&iv=${iv}`);
+    return `#key=${key}`;
 }
 
-async function decryptContent(content) {
-    const hash_b64 = window.location.hash.substring(1); // Remove the `#` character
-    const hash = atob(hash_b64);
+async function decrypt(input) {
+    const objectKey = window.location.hash.slice("#key=".length);
 
-    const params = new URLSearchParams(hash);
-
-    const key_b64 = params.get('key');
-    const iv_b64 = params.get('iv');
-
-    console.log(key_b64)
-
-    if (!key_b64 || !iv_b64) {
-        console.error("Missing required parameters in the hash fragment.");
-        return;
-    }
-
-    // Decode Base64 strings back to byte arrays
-    const encryptedArray = new Uint8Array(atob(content).split("").map(char => char.charCodeAt(0)));
-    const keyArray = new Uint8Array(atob(key_b64).split("").map(char => char.charCodeAt(0)));
-    const ivArray = new Uint8Array(atob(iv_b64).split("").map(char => char.charCodeAt(0)));
-
-    // Import the key
     const key = await window.crypto.subtle.importKey(
-        "raw",
-        keyArray,
+        "jwk",
         {
-            name: "AES-GCM",
+            k: objectKey,
+            alg: "A128GCM",
+            ext: true,
+            key_ops: ["encrypt", "decrypt"],
+            kty: "oct",
         },
-        false,
-        ["decrypt"]
+        {name: "AES-GCM", length: 128},
+        false, // extractable
+        ["decrypt"],
     );
 
-    // Decrypt the data
-    try {
-        const decryptedContent = await window.crypto.subtle.decrypt(
-            {
-                name: "AES-GCM",
-                iv: ivArray,
-            },
-            key,
-            encryptedArray
-        );
-
-        // Convert decrypted content back to a string
-        const decoder = new TextDecoder();
-        return decoder.decode(decryptedContent);
-
-    } catch (error) {
-        console.error("Decryption failed:", error);
-    }
+    const encrypted = new Uint8Array(atob(input).split('').map(c => c.charCodeAt(0)));
+    const decrypted = await window.crypto.subtle.decrypt(
+        {name: "AES-GCM", iv: new Uint8Array(12)},
+        key,
+        encrypted,
+    );
+    return new window.TextDecoder().decode(new Uint8Array(decrypted));
 }

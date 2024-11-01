@@ -17,6 +17,7 @@
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="{{URL::asset('js/encryption.js')}}"></script>
+    <script src="{{URL::asset('js/clipboard.js')}}"></script>
 </head>
 <body class="">
 <!-- Navigation Bar -->

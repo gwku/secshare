@@ -94,7 +94,7 @@
                 <div class="space-y-6">
                     <!-- FAQ Items -->
                     <details class="border border-gray-200 rounded-lg p-5 cursor-pointer transition hover:shadow-md">
-                        <summary class="font-semibold text-gray-700">{{__('faq.security.question')}}?</summary>
+                        <summary class="font-semibold text-gray-700">{{__('faq.security.question')}}</summary>
                         <p class="text-gray-600 mt-3 leading-relaxed">{{__('faq.security.answer')}}</p>
                     </details>
 

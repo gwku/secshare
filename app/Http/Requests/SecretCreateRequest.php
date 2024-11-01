@@ -11,7 +11,7 @@ class SecretCreateRequest extends FormRequest
         return [
             'content' => 'required',
             'expires_in' => 'required|integer|in:1,12,24,48,72,168',
-            'max_views' => 'required|integer|min:1|max:15',
+            'max_views' => 'required|integer|min:1|max:15'
         ];
     }
 
