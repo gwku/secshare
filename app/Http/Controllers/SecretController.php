@@ -38,7 +38,7 @@ class SecretController extends Controller
         ]);
 
         return view('secrets.link', [
-            'link' => URL::temporarySignedRoute('secrets.show', $expiresAt, ['secret' => $token]),
+            'link' => url('/') . URL::temporarySignedRoute('secrets.show', $expiresAt, ['secret' => $token], false),
             'expires_in' => $expiresAt->diffForHumans(),
             'max_views' => $validatedData['max_views'],
             'revoke_token' => $revoke_token,
@@ -47,7 +47,7 @@ class SecretController extends Controller
 
     public function show(Secret $secret)
     {
-        request()->hasValidSignature() || abort(403);
+        request()->hasValidRelativeSignature() || abort(403);
 
         if ($secret->views >= $secret->max_views || now('UTC') > $secret->expires_at) {
             $secret->delete();
