@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+use App\Console\Commands\RemoveExpiredSecrets;
+use App\Console\Commands\RemoveOverusedSecrets;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote')->hourly();
+Schedule::command(RemoveExpiredSecrets::class)->everyFiveMinutes();
+Schedule::command(RemoveOverusedSecrets::class)->everyFiveMinutes();

@@ -8,22 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Secret extends Model
 {
     use HasFactory;
-    protected $fillable = ['content', 'max_views', 'expires_at'];
+    protected $fillable = ['content', 'max_views', 'expires_at', 'token'];
+
+    public function getRouteKeyName(): string
+    {
+        return 'token';
+    }
 
     protected function casts(): array
     {
         return [
             'expires_at' => 'datetime',
+            'content' => 'encrypted'
         ];
     }
 
-    public function setContentAttribute($value): void
-    {
-        $this->attributes['content'] = encrypt($value);
-    }
-
-    public function getContentPasswordAttribute(): string
-    {
-        return decrypt($this->content);
-    }
 }
