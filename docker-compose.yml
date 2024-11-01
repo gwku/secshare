@@ -1,5 +1,5 @@
 services:
-    app:
+    secshare-app:
         build:
             args:
                 user: secshare
@@ -32,10 +32,10 @@ services:
         container_name: secshare_db
         restart: unless-stopped
         environment:
-            MYSQL_DATABASE: ${DB_DATABASE}
-            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-            MYSQL_PASSWORD: ${DB_PASSWORD}
-            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_DATABASE: laravel
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_PASSWORD: root
+            MYSQL_USER: root
             SERVICE_TAGS: dev
             SERVICE_NAME: mysql
 #        volumes:
