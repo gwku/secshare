@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('secrets', function (Blueprint $table) {
             $table->id();
             $table->text('content');
-            $table->string('token')->unique();
+            $table->string('token')->index();
             $table->dateTime('expires_at');
             $table->integer('views')->default(0);
             $table->integer('max_views')->default(1);
