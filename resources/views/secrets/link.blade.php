@@ -10,7 +10,7 @@
                     <span class="font-semibold">{{__('secrets.link.expires_in')}}</span> {{ $expires_in }}
                 </p>
                 <p class="text-gray-700">
-                    <span class="font-semibold">{{__('secrets.link.max_views')}}</span> {{ $max_views }} left
+                    <span class="font-semibold">{{__('secrets.link.max_views')}}</span> {{ $max_views }}
                 </p>
             </div>
 

@@ -13,7 +13,7 @@
                 <p class="text-gray-700"><span
                         class="font-semibold">{{__('secrets.show.expires_in')}}</span>{{ $expires_in }}</p>
                 <p class="text-gray-700"><span
-                        class="font-semibold">{{__('secrets.show.views_left')}}Views: </span>{{ $views }} left</p>
+                        class="font-semibold">{{__('secrets.show.views_left')}}</span>{{ $views }} left</p>
             </div>
 
             <!-- Secret content -->
