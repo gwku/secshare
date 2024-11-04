@@ -1,22 +1,21 @@
 services:
     secshare-app:
+        build:
+            args:
+                user: secshare
+                uid: 1000
+            context: ./
+            dockerfile: Dockerfile
         image: secshare
         container_name: secshare
         restart: unless-stopped
-        environment:
-            - APP_KEY=${APP_KEY}
-            - DB_CONNECTION=${DB_CONNECTION}
-            - DB_HOST=db
-            - DB_PORT=${DB_PORT}
-            - DB_DATABASE=${DB_DATABASE}
-            - DB_USERNAME=${DB_USERNAME}
-            - DB_PASSWORD=${DB_PASSWORD}
+        working_dir: /var/www/
+        volumes:
+            - ./:/var/www
         networks:
             - secshare
-        depends_on:
-            - db
 
-    nginx:
+    secshare-nginx:
         image: nginx:1.17-alpine
         container_name: secshare-nginx
         restart: unless-stopped
@@ -28,7 +27,7 @@ services:
         networks:
             - secshare
 
-    db:
+    secshare-db:
         image: mysql:8.0
         container_name: secshare_db
         restart: unless-stopped
@@ -37,6 +36,8 @@ services:
             MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
             MYSQL_PASSWORD: ${DB_PASSWORD}
             MYSQL_USER: ${DB_USERNAME}
+        volumes:
+            - dbdata:/var/lib/mysql
         networks:
             - secshare
 
