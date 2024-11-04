@@ -71,11 +71,11 @@ class SecretController extends Controller
     public function destroy(Secret $secret, SecretDeleteRequest $request)
     {
         if (!password_verify($request->revoke_token, $secret->revoke_token)) {
-            return back()->withErrors(['revoke_token' => 'The provided token is incorrect.']);
+            return back()->withErrors(['revoke_token' => __('secrets.edit.invalid_revoke_token')]);
         }
 
         $secret->delete();
 
-        return redirect()->route('secrets.create')->with('success', 'Secret deleted successfully!');
+        return redirect()->route('secrets.create')->with('success', __('secrets.edit.revoke_success'));
     }
 }

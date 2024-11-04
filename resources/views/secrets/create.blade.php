@@ -72,7 +72,7 @@
                             <x-tooltip>{{ __('secrets.create.max_views_tooltip') }}</x-tooltip>
                         </label>
                         <input type="number" name="max_views" id="max_views" min="1" max="15"
-                               value="{{old('max_views')}}"
+                               value="{{old('max_views') || 1}}"
                                class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                                placeholder="{{ __('secrets.create.enter_max_views_placeholder') }}"/>
                         @error('max_views')

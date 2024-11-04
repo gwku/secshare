@@ -44,6 +44,8 @@
     "secrets.edit.revoke_btn": "Revoke",
     "secrets.edit.enter_revoke_token_placeholder": "xei1AZQG22BTyM1",
     "secrets.edit.revoke_token_tooltip": "The revoke token you received when you created the link.",
+    "secrets.edit.invalid_revoke_token": "The provided token is incorrect.",
+    "secrets.edit.revoke_success": "The secret has been successfully revoked",
     "faq.title": "Frequently Asked Questions",
     "faq.security.question": "How secure is this service?",
     "faq.security.answer": "SecShare uses advanced end-to-end encryption to protect your data. This ensures that your information is encrypted in your browser before transmission and can only be decrypted by the recipient. Not even SecShare can access your secret.",

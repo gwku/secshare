@@ -16,7 +16,7 @@ class SecretFactory extends Factory
         $rnd_max_views = $this->faker->numberBetween(1, 15);
         return [
             'content' => $this->faker->word(),
-            'token' => Str::random(60) . '$' . Str::uuid(),
+            'token' => Str::uuid(),
             'revoke_token' => password_hash(Str::random(15), PASSWORD_DEFAULT),
             'expires_at' => Carbon::now(),
             'views' => $this->faker->numberBetween(0, $rnd_max_views),

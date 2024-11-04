@@ -64,7 +64,19 @@ Follow the basic setup and then run the following commands:
 
 The application will be available at `http://localhost:8000` by default.
 
+## Tests
+To ensure the application works as expected, you can run the tests using Dusk.
 
+1. Update the `APP_URL` in the `.env` file to match your local development URL.
+2. Run the server:
+   ```bash
+   php artisan serve
+   ```
+3. Run the Dusk tests:
+   ```bash
+   php artisan dusk
+   ```
+   
 ## Contributing 🤝
 
 If you find any issues or have ideas for improvements, feel free to open an issue or submit a pull request on the [GitHub repository](https://github.com/gwku/secshare). Contributions are always welcome!
