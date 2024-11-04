@@ -18,8 +18,7 @@ class Secret extends Model
     protected function casts(): array
     {
         return [
-            'expires_at' => 'datetime',
-            'content' => 'encrypted'
+            'expires_at' => 'datetime'
         ];
     }
 

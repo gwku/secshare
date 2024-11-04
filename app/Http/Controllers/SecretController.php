@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\SecretCreateRequest;
+use App\Http\Requests\SecretStoreRequest;
 use App\Http\Requests\SecretDeleteRequest;
 use App\Models\Secret;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -23,11 +23,11 @@ class SecretController extends Controller
         return view('secrets.create');
     }
 
-    public function store(SecretCreateRequest $request)
+    public function store(SecretStoreRequest $request)
     {
         $validatedData = $request->validated();
         $expiresAt = now('UTC')->addHours((int)$validatedData['expires_in']);
-        $token = Str::random(60) . '$' . Str::uuid();
+        $token = Str::uuid();
         $revoke_token = Str::random(15);
 
         Secret::create([
@@ -47,14 +47,13 @@ class SecretController extends Controller
 
     public function show(Secret $secret)
     {
-        request()->hasValidRelativeSignature() || abort(403);
-
-        if ($secret->views >= $secret->max_views || now('UTC') > $secret->expires_at) {
-            $secret->delete();
-            abort(404);
-        }
+        abort_unless(request()->hasValidRelativeSignature(), 403);
 
         $secret->increment('views');
+
+        if ($secret->views >= $secret->max_views) {
+            $secret->delete();
+        }
 
         return view('secrets.show', [
             'secret' => $secret->content,
@@ -76,6 +75,7 @@ class SecretController extends Controller
         }
 
         $secret->delete();
+
         return redirect()->route('secrets.create')->with('success', 'Secret deleted successfully!');
     }
 }
