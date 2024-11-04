@@ -3,7 +3,7 @@
 ## Introduction
 SecShare is an open-source tool that allows users to securely share sensitive information without involving any third parties. It was developed as part of a project for a client who needed a way to share confidential data.
 
-Read more about this project on the [blog post](https://gerwinkuijntjes.nl/en/secshare-open-source-secret-share-tool).
+Read more about this project on the [blog post](https://gerwinkuijntjes.nl/en/projects/secshare-open-source-secret-sharing-tool).
 
 ## Key Features
 
