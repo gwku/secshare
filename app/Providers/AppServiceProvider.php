@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Env;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -21,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (App::environment('production')) {
+        if (Env::get('APP_ENFORCE_HTTPS', false)) {
             URL::forceScheme('https');
         }
 
