@@ -27,6 +27,10 @@ Read more about this project on the [blog post](https://gerwinkuijntjes.nl/en/se
    ```bash
    composer install
    ```
+
+   ```bash
+   npm install
+   ```
 3. Copy the `.env.example` file to `.env` and update the database configuration.
 4. Generate the application key:
    ```bash
@@ -53,11 +57,17 @@ Also, if you want to host the application on a different port, update the `docke
 Make sure to update APP_URL in the `.env` file to match your hosting url if you want to host this tool.
 
 Follow the basic setup and then run the following commands:
-1. Build the Docker image:
+
+1. Building application assets:
+   ```bash
+   npm install && npm run dev
+   ```
+
+2. Build the Docker image:
    ```bash
    docker build -t secshare .
    ```
-2. Run the Docker container:
+3. Run the Docker container:
    ```bash
    docker compose up -d
    ```
