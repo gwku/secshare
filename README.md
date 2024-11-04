@@ -44,9 +44,14 @@ Follow the basic setup and then run the following command:
    php artisan serve
    ```
    
-The application will be available at `http://localhost:8000`.
+The application will be available at `http://localhost:8000` by default.
 
 ### Docker
+The Docker setup is also available for running the application in a containerized environment.
+If you run the application using Docker, make sure to update the `.env` file with the appropriate database configuration (MYSQL driver).
+Also, if you want to host the application on a different port, update the `docker-compose.yml` file accordingly.
+Make sure to update APP_URL in the `.env` file to match your hosting url if you want to host this tool.
+
 Follow the basic setup and then run the following commands:
 1. Build the Docker image:
    ```bash
@@ -57,8 +62,7 @@ Follow the basic setup and then run the following commands:
    docker compose up -d
    ```
 
-The application will be available at `http://localhost:8000`.
-
+The application will be available at `http://localhost:8000` by default.
 
 
 ## Contributing 🤝
