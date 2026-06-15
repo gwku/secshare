@@ -17,3 +17,10 @@ yarn-error.log
 /.idea
 /.vscode
 /.zed
+/.git
+/.github
+/tests
+/docker-compose
+/docker-compose.yml
+Dockerfile
+README.md
