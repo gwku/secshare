@@ -1,7 +1,17 @@
 # Production image for secshare (Laravel 11, PHP 8.2-fpm), used by the k3s deploy.
 # The dev `Dockerfile` relies on a bind-mount of the source; this one BAKES the
-# app in and targets Postgres (pdo_pgsql instead of pdo_mysql). Front-end assets
-# (public/build) are committed, so no Node build stage is needed.
+# app in and targets Postgres (pdo_pgsql instead of pdo_mysql).
+
+# Stage 1 — build the front-end assets (Vite/Tailwind). public/build is
+# git-ignored, so the compiled CSS/JS must be generated here rather than copied.
+FROM node:20-alpine AS assets
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Stage 2 — PHP runtime.
 FROM php:8.2-fpm
 
 # System deps for the PHP extensions we build (libpq-dev is for pdo_pgsql).
@@ -20,8 +30,12 @@ WORKDIR /var/www
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts --prefer-dist
 
-# App source (vendor/ and .env are excluded via .dockerignore).
+# App source (vendor/, node_modules/ and .env are excluded via .dockerignore).
 COPY . .
+
+# Bring in the Vite-built assets (manifest.json + public/build/assets) so the
+# @vite() directive in the Blade layout resolves the Tailwind CSS + JS.
+COPY --from=assets /app/public/build ./public/build
 
 # Re-dump the optimized autoloader now that app/ classes are present, and make the
 # Laravel-writable trees owned by the php-fpm runtime user. The package manifest +
