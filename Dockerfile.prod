@@ -1,0 +1,36 @@
+# Production image for secshare (Laravel 11, PHP 8.2-fpm), used by the k3s deploy.
+# The dev `Dockerfile` relies on a bind-mount of the source; this one BAKES the
+# app in and targets Postgres (pdo_pgsql instead of pdo_mysql). Front-end assets
+# (public/build) are committed, so no Node build stage is needed.
+FROM php:8.2-fpm
+
+# System deps for the PHP extensions we build (libpq-dev is for pdo_pgsql).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        git curl zip unzip \
+        libpng-dev libonig-dev libxml2-dev libpq-dev \
+    && docker-php-ext-install pdo_pgsql mbstring exif pcntl bcmath gd \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www
+
+# Install PHP deps first for better layer caching. --no-scripts so composer does
+# not invoke artisan before the app code is present (and so a build needs no .env).
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts --prefer-dist
+
+# App source (vendor/ and .env are excluded via .dockerignore).
+COPY . .
+
+# Re-dump the optimized autoloader now that app/ classes are present, and make the
+# Laravel-writable trees owned by the php-fpm runtime user. The package manifest +
+# config are (re)generated at runtime — config is NOT cached so env vars from k8s
+# take effect.
+RUN composer dump-autoload --optimize --no-dev --no-scripts \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R ug+rwX storage bootstrap/cache
+
+USER www-data
+
+# Base image default CMD runs php-fpm on :9000.
